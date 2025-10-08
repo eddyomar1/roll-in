@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 // ---------- AJUSTA ESTO ----------
 const DB_HOST = 'localhost';
-const DB_NAME = 'u138076177_chacharito';
-const DB_USER = '3spWifiPruev@';
-const DB_PASS = 'u138076177_pw';
+const DB_NAME = 'u138076177_pw';
+const DB_USER = 'u138076177_chacharito';
+const DB_PASS = '3spWifiPruev@';
 
 
 

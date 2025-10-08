@@ -8,7 +8,6 @@ const DB_USER = 'u138076177_chacharito';
 const DB_PASS = '3spWifiPruev@';
 
 
-
 const API_KEY = 'ColocaUnSecretoLargo';     // Header: X-API-Key
 // ----------------------------------
 

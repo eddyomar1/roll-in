@@ -1,4 +1,7 @@
+
 <?php
+// config.php
+
 declare(strict_types=1);
 
 // ---------- AJUSTA ESTO ----------

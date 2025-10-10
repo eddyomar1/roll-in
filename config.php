@@ -1,8 +1,8 @@
+<?php declare(strict_types=1);
 
-<?php
 // config.php
 
-declare(strict_types=1);
+
 
 // ---------- AJUSTA ESTO ----------
 const DB_HOST = 'localhost';

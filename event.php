@@ -1,7 +1,7 @@
 <?php
 
 // event.php
-
+ 
 require __DIR__.'/config.php';
 require_api_key();
 

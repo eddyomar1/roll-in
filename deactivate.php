@@ -16,6 +16,8 @@ if ($hdrKey !== API_KEY) {
   echo json_encode(['ok'=>false,'error'=>'unauthorized']); exit;
 }
 
+$pdo = pdo();  // Obtener conexión (config.php define pdo())
+
 // JSON
 $body = file_get_contents('php://input');
 $data = json_decode($body, true);

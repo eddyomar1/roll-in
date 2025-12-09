@@ -16,6 +16,8 @@ if ($hdrKey !== API_KEY) {
   echo json_encode(['ok'=>false,'error'=>'unauthorized']); exit;
 }
 
+$pdo = pdo();  // Obtener conexión (config.php define pdo())
+
 // --- JSON body ---
 $body = file_get_contents('php://input');
 $data = json_decode($body, true);
@@ -33,31 +35,25 @@ if (!preg_match('/^[0-9A-F]{10}$/', $codeHex)) {
 }
 
 try {
-  // UNIQUE(code) recomendado. Si ya existe, actualizamos.
-  $sql = "
-    INSERT INTO whitelist_controls (label, code, active, last_used_at)
-    VALUES (:label, UNHEX(:code_hex), :active, NULL)
-    ON DUPLICATE KEY UPDATE
-      label = VALUES(label),
-      active = VALUES(active)
-  ";
-  $st = $pdo->prepare($sql);
+  // Insertar siempre un registro nuevo (no se actualizan duplicados)
+  $sql = "INSERT INTO whitelist_controls (label, code, active, last_used_at)
+          VALUES (:label, UNHEX(:code_hex), :active, NULL)";
+  $st  = $pdo->prepare($sql);
   $st->execute([
     ':label'    => $label,
     ':code_hex' => $codeHex,
     ':active'   => $active ? 1 : 0,
   ]);
 
-  // id de la fila (si existía ya, intenta obtenerla)
-  $id = $pdo->lastInsertId();
-  if (!$id) {
-    $q = $pdo->prepare("SELECT id FROM whitelist_controls WHERE code = UNHEX(:h) LIMIT 1");
-    $q->execute([':h'=>$codeHex]);
-    $id = $q->fetchColumn();
-  }
-
-  echo json_encode(['ok'=>true,'id'=>(int)$id]);
+  echo json_encode(['ok'=>true,'id'=>(int)$pdo->lastInsertId()]);
 } catch (Throwable $e) {
-  http_response_code(500);
-  echo json_encode(['ok'=>false,'error'=>$e->getMessage()]);
+  $msg = $e->getMessage();
+  // Si hay constraint UNIQUE en code, retornamos error explícito
+  if (strpos($msg, '1062') !== false) {
+    http_response_code(409);
+    echo json_encode(['ok'=>false,'error'=>'duplicate_code']);
+  } else {
+    http_response_code(500);
+    echo json_encode(['ok'=>false,'error'=>$msg]);
+  }
 }
